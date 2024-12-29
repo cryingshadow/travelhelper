@@ -17,15 +17,21 @@ public class Main {
     private static final List<Function<OCEntry, Optional<TravelExpenseEntry>>> CONVERTERS =
         List.of();
 
+    private static final int NUMBER_OF_TRAVEL_ENTRIES = 8;
+
     public static void main(final String[] args) throws IOException {
-        if (args == null || args.length != 2) {
-            System.out.println("Call with calendarExportFile and travelExpenseFile!");
+        if (args == null || args.length != 3) {
+            System.out.println("Call with calendarExportFile, fromDate, and travelExpenseFile!");
             return;
         }
         final File calendarExportFile = new File(args[0]);
-        final File travelExpenseFile = new File(args[1]);
+        final LocalDateTime fromDate = LocalDateTime.parse(args[1], Main.DATE_FORMAT);
+        final File travelExpenseFile = new File(args[2]);
         final List<OCEntry> calendarEntries = OCEntry.parse(calendarExportFile);
-        final List<TravelExpenseEntry> travelExpenseEntries = Main.convertToTravelExpenseEntries(calendarEntries);
+        final List<TravelExpenseEntry> travelExpenseEntries =
+            Main.convertToTravelExpenseEntries(
+                calendarEntries.stream().filter(entry -> entry.start().compareTo(fromDate) >= 0).toList()
+            );
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(travelExpenseFile))) {
             writer.write("\\documentclass{article}\n");
             writer.write("\n");
@@ -45,6 +51,11 @@ public class Main {
                 writer.write(entry.toString());
                 writer.write("\n");
             }
+            final int numberOfEmptyEntries = Main.NUMBER_OF_TRAVEL_ENTRIES - travelExpenseEntries.size();
+            for (int i = 0; i < numberOfEmptyEntries; i++) {
+                writer.write("\\emptytravel{}");
+                writer.write("\n");
+            }
             writer.write("}\n");
             writer.write("\n");
             writer.write("\\input{../../../templates/travel/travel.tex}\n");
@@ -58,7 +69,7 @@ public class Main {
                 calendarEntries.stream().map(converter).filter(Optional::isPresent).map(Optional::get).toList()
             );
         }
-        return result;
+        return result.stream().sorted().limit(Main.NUMBER_OF_TRAVEL_ENTRIES).toList();
     }
 
     private static LocalDateTime getMaxDate(final List<TravelExpenseEntry> travelExpenseEntries) {

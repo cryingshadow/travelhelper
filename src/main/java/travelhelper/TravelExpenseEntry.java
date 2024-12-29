@@ -1,8 +1,18 @@
 package travelhelper;
 
 import java.time.*;
+import java.util.*;
 
-public abstract class TravelExpenseEntry {
+import ocp.*;
+
+public abstract class TravelExpenseEntry implements Comparable<TravelExpenseEntry> {
+
+    private static final Comparator<TravelExpenseEntry> COMPARATOR =
+        new LexicographicComparator<TravelExpenseEntry>(
+            entry -> entry.start,
+            entry -> entry.end,
+            entry -> entry.destination
+        );
 
     public final String destination;
 
@@ -26,6 +36,11 @@ public abstract class TravelExpenseEntry {
         this.destination = destination;
         this.route = route;
         this.reason = reason;
+    }
+
+    @Override
+    public int compareTo(final TravelExpenseEntry other) {
+        return TravelExpenseEntry.COMPARATOR.compare(this, other);
     }
 
 }
