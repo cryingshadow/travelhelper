@@ -19,9 +19,10 @@ public class CarTravelEntry extends TravelExpenseEntry {
     }
 
     @Override
-    public String toString() {
+    public String toString(final boolean comment) {
         return String.format(
-            "\\cartravel{%s}{%s}{%s}{%s}{%s}{%s}{%s}{%d}",
+            "%s\\cartravel{%s}{%s}{%s}{%s}{%s}{%s}{%s}{%d}",
+            comment ? "%" : "",
             this.start.format(Main.DATE_FORMAT),
             this.start.format(Main.TIME_FORMAT),
             this.end.format(Main.DATE_FORMAT),
