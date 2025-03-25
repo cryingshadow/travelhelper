@@ -42,9 +42,6 @@ public class Main {
             writer.write("\n");
             writer.write("\\input{../../../templates/travel/packages.tex}\n");
             writer.write("\n");
-            writer.write("\\newcommand{\\placedate}{\\E, ");
-            writer.write(LocalDate.now().format(Main.DATE_FORMAT));
-            writer.write("}\n");
             writer.write("\\newcommand{\\reportfrom}{");
             writer.write(Main.getMinDate(travelExpenseEntries).format(Main.DATE_FORMAT));
             writer.write("}\n");
