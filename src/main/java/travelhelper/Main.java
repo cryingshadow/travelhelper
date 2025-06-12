@@ -60,6 +60,7 @@ public class Main {
                 writer.write("\\emptytravel{}");
                 writer.write("\n");
             }
+            writer.write("\\bills{0}\n");
             writer.write("}\n");
             writer.write("\n");
             writer.write("\\input{../../../templates/travel/travel.tex}\n");
